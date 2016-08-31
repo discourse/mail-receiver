@@ -1,0 +1,81 @@
+#!/usr/bin/env ruby
+
+ENV_FILE    = "/etc/postfix/mail-receiver-environment.json"
+EX_TEMPFAIL = 75
+EX_SUCCESS  = 0
+
+require 'syslog'
+require 'json'
+require "uri"
+require "net/http"
+
+def logger
+	@logger ||= Syslog.open("receive-mail", Syslog::LOG_PID, Syslog::LOG_MAIL)
+end
+
+def fatal(*args)
+	logger.crit *args
+	exit EX_TEMPFAIL
+end
+
+def main
+	unless File.exists?(ENV_FILE)
+		fatal "Config file %s does not exist. Aborting.", ENV_FILE
+	end
+
+	real_env = JSON.parse(File.read(ENV_FILE))
+
+	%w{DISCOURSE_MAIL_ENDPOINT DISCOURSE_API_KEY DISCOURSE_API_USERNAME}.each do |kw|
+		fatal "env var %s is required", kw unless real_env[kw]
+	end
+
+	recipient = ARGV.first
+	mail      = $stdin.read
+
+	logger.debug "Recipient: #{recipient}"
+	fatal "No recipient passed on command line." unless recipient
+	fatal "No message passed on stdin." if mail.nil? || mail.empty?
+
+	post_email(recipient, mail, real_env)
+rescue StandardError => ex
+	logger.err "Unexpected error while invoking mail processor: %s (%s)", ex.message, ex.class
+	logger.err ex.backtrace.map { |l| "  #{l}" }.join("\n")
+
+	exit EX_TEMPFAIL
+end
+
+def post_email(_recipient, mail, env)
+	endpoint = env["DISCOURSE_MAIL_ENDPOINT"]
+	key      = env["DISCOURSE_API_KEY"]
+	username = env["DISCOURSE_API_USERNAME"]
+
+	uri = URI.parse(endpoint)
+	api_qs = "api_key=#{key}&api_username=#{username}"
+	if uri.query and !uri.query.empty?
+		uri.query += "&#{api_qs}"
+	else
+		uri.query = api_qs
+	end
+
+	begin
+		http = Net::HTTP.new(uri.host, uri.port)
+		http.use_ssl = uri.scheme == "https"
+		post = Net::HTTP::Post.new(uri.request_uri)
+		post.set_form_data(email: mail)
+
+		response = http.request(post)
+	rescue StandardError => ex
+		logger.err "Failed to POST the e-mail to %s: %s (%s)", endpoint, ex.message, ex.class
+		logger.err ex.backtrace.map { |l| "  #{l}" }.join("\n")
+		exit EX_TEMPFAIL
+	ensure
+		http.finish if http && http.started?
+	end
+
+	exit EX_SUCCESS if Net::HTTPSuccess === response
+
+	logger.err "Failed to POST the e-mail to %s: %s", endpoint, response.code
+	exit EX_TEMPFAIL
+end
+
+main if __FILE__ == $0
