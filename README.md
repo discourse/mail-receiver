@@ -23,6 +23,16 @@ This involves setting the following environment variables:
   `https://example.com/forum` ->
   `https://example.com/forum/admin/email/handle_mail`).
 
+* `DISCOURSE_SMTP_SHOULD_REJECT_ENDPOINT` -- the complete URL to the API
+  endpoint for aiding fast rejection at the SMTP level. This will be whatever
+  your Discourse site URL is, with `/admin/email/smtp_should_reject.json`
+  appended.  For example, if people normally visit your Discourse forum by
+  going to `https://discourse.example.com`, this environment variable should be
+  set to `https://discourse.example.com/admin/email/smtp_should_reject.json`.
+  If you're running a subfolder setup, be sure to account for that (ie
+  `https://example.com/forum` ->
+  `https://example.com/forum/admin/email/smtp_should_reject.json`).
+
 * `DISCOURSE_API_KEY` -- the API key which will be used to authenticate to
   Discourse in order to submit mail.  The value to use is shown in the "API"
   tab of the site admin dashboard.
@@ -72,3 +82,11 @@ specified URL (`DISCOURSE_MAIL_ENDPOINT`), with the key and username
 specified.  Discourse itself stands ready to receive that e-mail and process
 it into the discussion, in exactly the same way as an e-mail received via
 POP3 polling.
+
+Before delivery to the `discourse` service, a Postfix policy handler runs,
+asks Discourse if either the sender and/or recipient are invalid, and if so,
+rejects the incoming mail during the SMTP transaction, to prevent Discourse
+later sending out reply emails due to incoming spam ("backscatter").
+Legitimate users will be notified of the failure by their MTA, and obvious
+spam just gets dropped without reply. This step is just about being a good
+citizen of the Internet and not full spam filtering.
