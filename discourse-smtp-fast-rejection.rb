@@ -51,11 +51,13 @@ end
 def process_single_request(args, env)
   action = 'dunno'
   if args['request'] != 'smtpd_access_policy'
-    action = 'defer_if_permit Internal error'
+    action = 'defer_if_permit Internal error, Request type invalid'
   elsif args['protocol_state'] != 'RCPT'
     action = 'dunno' 
-  elsif args['sender'].nil? || args['recipient'].nil?
-    action = 'defer_if_permit Internal error'
+  elsif args['sender'].nil?
+    action = 'defer_if_permit No sender specified'
+  elsif args['recipient'].nil?
+    action = 'defer_if_permit No recipient specified'
   else
     action = maybe_reject_email(args['sender'], args['recipient'], env)
   end
@@ -88,7 +90,7 @@ def maybe_reject_email(from, to, env)
   rescue StandardError => ex
     logger.err "Failed to GET smtp_should_reject answer from %s: %s (%s)", endpoint, ex.message, ex.class
     logger.err ex.backtrace.map { |l| "  #{l}" }.join("\n")
-    return "defer_if_permit Internal error"
+    return "defer_if_permit Internal error, API request preparation failed"
   ensure
     http.finish if http && http.started?
   end
@@ -100,7 +102,7 @@ def maybe_reject_email(from, to, env)
     end
   else
     logger.err "Failed to GET smtp_should_reject answer from %s: %s", endpoint, response.code
-    return "defer_if_permit Internal error"
+    return "defer_if_permit Internal error, API request failed"
   end
 
   return "dunno"  # let future tests also be allowed to reject this one.
