@@ -24,7 +24,7 @@ def main
 
   real_env = JSON.parse(File.read(ENV_FILE))
 
-  %w{DISCOURSE_MAIL_ENDPOINT DISCOURSE_API_KEY DISCOURSE_API_USERNAME}.each do |kw|
+  %w{DISCOURSE_SMTP_SHOULD_REJECT_ENDPOINT DISCOURSE_API_KEY DISCOURSE_API_USERNAME}.each do |kw|
     fatal "env var %s is required", kw unless real_env[kw]
   end
 
