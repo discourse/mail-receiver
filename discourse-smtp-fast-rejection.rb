@@ -38,14 +38,13 @@ def process_requests(env)
   while line = gets
     # Fill up args with the request details.
     line = line.chomp
-    if !line.empty?
+    if line.empty?
+      process_single_request(args, env)
+      args = {}  # reset for next request.
+    else
       k,v = line.chomp.split('=', 2)
-      args[k] = v;
-      next
+      args[k] = v
     end
-
-    process_single_request(args, env)
-    args = {}  # reset for next request.
   end
 end
 
