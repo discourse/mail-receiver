@@ -3,6 +3,7 @@
 require 'syslog'
 require 'json'
 require 'uri'
+require 'cgi'
 require 'net/http'
 
 ENV_FILE = "/etc/postfix/mail-receiver-environment.json"
@@ -64,20 +65,14 @@ def process_single_request(args, env)
   puts ''
 end
 
-def escapeApiArg(str)
-  retval = URI.escape(str)  # do default unsafe chars
-  retval = URI.escape(str, '+')  # '+' isn't in the default unsafe list, but Discourse needs it escaped.
-  return retval
-end
-
 def maybe_reject_email(from, to, env)
   endpoint = env["DISCOURSE_SMTP_SHOULD_REJECT_ENDPOINT"]
   key = env["DISCOURSE_API_KEY"]
   username = env["DISCOURSE_API_USERNAME"]
 
   uri = URI.parse(endpoint)
-  fromarg = escapeApiArg(from)
-  toarg = escapeApiArg(to)
+  fromarg = CGI::escape(from)
+  toarg = CGI::escape(to)
 
   api_qs = "api_key=#{key}&api_username=#{username}&from=#{fromarg}&to=#{toarg}"
   if uri.query and !uri.query.empty?
