@@ -24,7 +24,7 @@ def main
 
   real_env = JSON.parse(File.read(ENV_FILE))
 
-  %w{DISCOURSE_SMTP_SHOULD_REJECT_ENDPOINT DISCOURSE_API_KEY DISCOURSE_API_USERNAME}.each do |kw|
+  %w{DISCOURSE_BASE_URL DISCOURSE_API_KEY DISCOURSE_API_USERNAME}.each do |kw|
     fatal "env var %s is required", kw unless real_env[kw]
   end
 
@@ -67,7 +67,7 @@ def process_single_request(args, env)
 end
 
 def maybe_reject_email(from, to, env)
-  endpoint = env["DISCOURSE_SMTP_SHOULD_REJECT_ENDPOINT"]
+  endpoint = "#{env['DISCOURSE_BASE_URL']}/admin/email/smtp_should_reject.json"
   key = env["DISCOURSE_API_KEY"]
   username = env["DISCOURSE_API_USERNAME"]
 
