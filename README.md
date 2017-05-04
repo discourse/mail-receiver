@@ -13,15 +13,10 @@ This involves setting the following environment variables:
 * `MAIL_DOMAIN` -- the domain name(s) to accept mail for and relay to
   Discourse.  Any number of space-separated domain names can be listed here.
 
-* `DISCOURSE_MAIL_ENDPOINT` -- the complete URL to the API endpoint for
-  receiving incoming e-mail.  This will be whatever your Discourse site URL
-  is, with `/admin/email/handle_mail` appended.  For example, if people
-  normally visit your Discourse forum by going to
-  `https://discourse.example.com`, this environment variable should be set
-  to `https://discourse.example.com/admin/email/handle_mail`.  If you're
-  running a subfolder setup, be sure to account for that (ie
-  `https://example.com/forum` ->
-  `https://example.com/forum/admin/email/handle_mail`).
+* `DISCOURSE_BASE_URL` -- the base URL for this Discourse instance.
+  This will be whatever your Discourse site URL is. For example,
+  `https://discourse.example.com`. If you're running a subfolder setup,
+  be sure to account for that (ie `https://example.com/forum`).
 
 * `DISCOURSE_API_KEY` -- the API key which will be used to authenticate to
   Discourse in order to submit mail.  The value to use is shown in the "API"
@@ -68,7 +63,15 @@ container and process syslog entries intelligently (such as, say,
 
 Every e-mail that is received is delivered to a custom `discourse` service.
 That service, which is a small Ruby program, makes a POST request to the
-specified URL (`DISCOURSE_MAIL_ENDPOINT`), with the key and username
-specified.  Discourse itself stands ready to receive that e-mail and process
-it into the discussion, in exactly the same way as an e-mail received via
-POP3 polling.
+admin interface on the specified URL (`DISCOURSE_BASE_URL`), with the key
+and username specified.  Discourse itself stands ready to receive that
+e-mail and process it into the discussion, in exactly the same way as an
+e-mail received via POP3 polling.
+
+Before delivery to the `discourse` service, a Postfix policy handler runs,
+asks Discourse if either the sender and/or recipient are invalid, and if so,
+rejects the incoming mail during the SMTP transaction, to prevent Discourse
+later sending out reply emails due to incoming spam ("backscatter").
+Legitimate users will be notified of the failure by their MTA, and obvious
+spam just gets dropped without reply. This step is just about being a good
+citizen of the Internet and not full spam filtering.

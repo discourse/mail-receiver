@@ -29,7 +29,7 @@ done
 /usr/sbin/postmap /etc/postfix/transport
 
 # Make sure the necessary Discourse connection details are in place
-for v in DISCOURSE_MAIL_ENDPOINT DISCOURSE_API_KEY DISCOURSE_API_USERNAME; do
+for v in DISCOURSE_BASE_URL DISCOURSE_API_KEY DISCOURSE_API_USERNAME; do
 	if [ -z "${!v}" ]; then
 		echo "FATAL ERROR: $v env var is not set." >&2
 		exit 1
