@@ -29,12 +29,17 @@ done
 /usr/sbin/postmap /etc/postfix/transport
 
 # Make sure the necessary Discourse connection details are in place
-for v in DISCOURSE_BASE_URL DISCOURSE_API_KEY DISCOURSE_API_USERNAME; do
+for v in DISCOURSE_API_KEY DISCOURSE_API_USERNAME; do
 	if [ -z "${!v}" ]; then
 		echo "FATAL ERROR: $v env var is not set." >&2
 		exit 1
 	fi
 done
+
+if [ -z "$DISCOURSE_BASE_URL" ] && [ -z "$DISCOURSE_MAIL_ENDPOINT" ] ; then
+	echo "FATAL ERROR: You need to define DISCOURSE_BASE_URL or DISCOURSE_MAIL_ENDPOINT" >&2
+	exit 1
+fi
 
 # Generic postfix config setting code... bashers gonna bash.
 for envvar in $(compgen -v); do

@@ -13,7 +13,7 @@ def logger
 end
 
 def fatal(*args)
-  logger.crit *args
+  logger.crit(*args)
   exit 1
 end
 
@@ -25,7 +25,10 @@ def main
   real_env = JSON.parse(File.read(ENV_FILE))
 
   %w{DISCOURSE_BASE_URL DISCOURSE_API_KEY DISCOURSE_API_USERNAME}.each do |kw|
-    fatal "env var %s is required", kw unless real_env[kw]
+    unless real_env[kw]
+      logger.debug "env variable #{kw} missing, fast rejection disabled"
+      real_env['FAST_REJECTION_DISABLED'] = true
+    end
   end
 
   process_requests(real_env)
@@ -39,7 +42,9 @@ def process_requests(env)
     # Fill up args with the request details.
     line = line.chomp
     if line.empty?
-      process_single_request(args, env)
+      puts "action=#{process_single_request(args, env)}"
+      puts ''
+
       args = {}  # reset for next request.
     else
       k,v = line.chomp.split('=', 2)
@@ -49,21 +54,19 @@ def process_requests(env)
 end
 
 def process_single_request(args, env)
-  action = 'dunno'
+  return 'dunno' if env['FAST_REJECTION_DISABLED']
+
   if args['request'] != 'smtpd_access_policy'
-    action = 'defer_if_permit Internal error, Request type invalid'
+    return 'defer_if_permit Internal error, Request type invalid'
   elsif args['protocol_state'] != 'RCPT'
-    action = 'dunno' 
+    return 'dunno'
   elsif args['sender'].nil?
-    action = 'defer_if_permit No sender specified'
+    return 'defer_if_permit No sender specified'
   elsif args['recipient'].nil?
-    action = 'defer_if_permit No recipient specified'
-  else
-    action = maybe_reject_email(args['sender'], args['recipient'], env)
+    return 'defer_if_permit No recipient specified'
   end
 
-  puts "action=#{action}"
-  puts ''
+  maybe_reject_email(args['sender'], args['recipient'], env)
 end
 
 def maybe_reject_email(from, to, env)
