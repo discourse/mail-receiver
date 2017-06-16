@@ -1,0 +1,4 @@
+{
+	"DISCOURSE_API_KEY": "EXAMPLE_KEY",
+	"DISCOURSE_BASE_URL": "https://localhost:8080"
+}
