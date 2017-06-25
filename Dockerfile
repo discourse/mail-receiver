@@ -19,11 +19,11 @@ RUN >/etc/postfix/main.cf \
 	&& postconf -e transport_maps=hash:/etc/postfix/transport \
 	&& postconf -e 'smtpd_recipient_restrictions = check_policy_service unix:private/policy' \
 	&& postconf -M -e 'discourse/unix=discourse unix - n n - - pipe user=nobody:nogroup argv=/usr/local/bin/receive-mail ${recipient}' \
-	&& postconf -M -e 'policy/unix=policy unix - n n - - spawn user=nobody argv=/usr/local/bin/discourse-smtp-fast-rejection.rb' \
+	&& postconf -M -e 'policy/unix=policy unix - n n - - spawn user=nobody argv=/usr/local/bin/discourse-smtp-fast-rejection' \
 	&& rm -rf /var/spool/postfix/*
 
 COPY receive-mail /usr/local/bin/
-COPY discourse-smtp-fast-rejection.rb /usr/local/bin/
+COPY discourse-smtp-fast-rejection /usr/local/bin/
 COPY boot /sbin/
 COPY fake-pups /pups/bin/pups
 
