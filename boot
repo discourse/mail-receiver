@@ -20,7 +20,7 @@ if [ -z "$MAIL_DOMAIN" ]; then
 	exit 1
 fi
 
-/usr/sbin/postconf -e relay_domains=$MAIL_DOMAIN
+/usr/sbin/postconf -e relay_domains="$MAIL_DOMAIN"
 rm -f /etc/postfix/transport
 for d in $MAIL_DOMAIN; do
 	echo "Delivering mail sent to $d to Discourse" >&2
