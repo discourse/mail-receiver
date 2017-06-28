@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [ -z "$1" ]; then
+	echo "Give me a tag to build, please." >&2
+	exit 1
+fi
+
+git push
+git tag v$1
+git push --tags
+
+docker build --build-arg=http_proxy=$http_proxy -t discourse/mail-receiver:$1 .
+docker push discourse/mail-receiver:$1
