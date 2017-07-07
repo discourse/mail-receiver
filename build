@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ -z "$1" ]; then
 	echo "Give me a tag to build, please." >&2
 	exit 1
