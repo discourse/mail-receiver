@@ -25,6 +25,5 @@ RUN >/etc/postfix/main.cf \
 COPY receive-mail discourse-smtp-fast-rejection /usr/local/bin/
 COPY lib/* /usr/local/lib/site_ruby/
 COPY boot /sbin/
-COPY fake-pups /pups/bin/pups
 
 CMD ["/sbin/boot"]
