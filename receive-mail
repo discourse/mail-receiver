@@ -4,7 +4,7 @@ ENV_FILE    = "/etc/postfix/mail-receiver-environment.json"
 EX_TEMPFAIL = 75
 EX_SUCCESS  = 0
 
-require_relative 'lib/discourse_mail_receiver'
+require 'mail_receiver/discourse_mail_receiver'
 
 if __FILE__ == $0
 	begin

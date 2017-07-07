@@ -22,9 +22,8 @@ RUN >/etc/postfix/main.cf \
 	&& postconf -M -e 'policy/unix=policy unix - n n - - spawn user=nobody argv=/usr/local/bin/discourse-smtp-fast-rejection' \
 	&& rm -rf /var/spool/postfix/*
 
-COPY receive-mail /usr/local/bin/
-COPY lib/* /usr/local/bin/lib/
-COPY discourse-smtp-fast-rejection /usr/local/bin/
+COPY receive-mail discourse-smtp-fast-rejection /usr/local/bin/
+COPY lib/* /usr/local/lib/site_ruby/
 COPY boot /sbin/
 COPY fake-pups /pups/bin/pups
 
