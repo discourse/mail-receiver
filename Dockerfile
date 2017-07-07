@@ -23,7 +23,7 @@ RUN >/etc/postfix/main.cf \
 	&& rm -rf /var/spool/postfix/*
 
 COPY receive-mail discourse-smtp-fast-rejection /usr/local/bin/
-COPY lib/* /usr/local/lib/site_ruby/
+COPY lib/* /usr/local/lib/ruby/site_ruby/
 COPY boot /sbin/
 
 CMD ["/sbin/boot"]
