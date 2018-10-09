@@ -20,7 +20,7 @@ class MailReceiverBase
 	end
 
 	def self.logger
-		@logger ||= Syslog.open("receive-mail", Syslog::LOG_PID, Syslog::LOG_MAIL)
+		@logger ||= Syslog.open(File.basename($0), Syslog::LOG_PID, Syslog::LOG_MAIL)
 	end
 
 	def logger
