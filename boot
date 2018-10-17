@@ -2,12 +2,12 @@
 
 set -e
 
-# First, fire up possibly the world's *worst* syslog server, unless there's
-# somewhere else meaningful to send syslog data to
-if [ -z "$SYSLOG_SOCKET" ]; then
+# Send syslog messages to stderr, optionally relaying them to another socket
+# for postfix-exporter to take a look at
+if [ -z "$SOCKETEE_RELAY_SOCKET" ]; then
 	/usr/bin/socat UNIX-RECV:/dev/log,mode=0666 stderr &
 else
-	ln -sf "$SYSLOG_SOCKET" /dev/log
+	/usr/local/bin/socketee /dev/log "$SOCKETEE_RELAY_SOCKET" &
 fi
 
 echo "Operating environment:" >&2

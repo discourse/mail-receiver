@@ -51,12 +51,9 @@ out-of-the-box syslog integration, this container runs a tiny script which
 reads all syslog data and dumps it to the container's `stderr` (which is
 then examinable by `docker logs`).
 
-If, by some chance, you have a system which can inject itself into a
-container and process syslog entries intelligently (such as, say,
-[syslogstash](https://github.com/discourse/syslogstash)), you can set the
-`SYSLOG_SOCKET` environment variable to an alternate path, and the
-`/dev/log` syslog socket will be symlinked to that alternate path.
-
+If, by some chance, you want to process your Postfix logs more extensively,
+you can set `SOCKETEE_RELAY_SOCKET` and all syslog messages will also be
+sent to that socket for further processing.
 
 
 # Theory of Operation
