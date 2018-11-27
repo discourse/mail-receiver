@@ -4,6 +4,7 @@ require 'uri'
 require 'cgi'
 require 'net/http'
 
+require_relative 'mail'
 require_relative 'mail_receiver_base'
 
 class FastRejection < MailReceiverBase
@@ -12,6 +13,10 @@ class FastRejection < MailReceiverBase
 		super(env_file)
 
 		@disabled = @env['DISCOURSE_FAST_REJECTION_DISABLED'] || !@env['DISCOURSE_BASE_URL']
+
+		@blacklisted_sender_domains = Hash[
+			@env.fetch('BLACKLISTED_SENDER_DOMAINS', "").split(" ").map { |v| [v.downcase, nil] }
+		]
 	end
 
 	def disabled?
@@ -48,6 +53,16 @@ class FastRejection < MailReceiverBase
 			return 'defer_if_permit No sender specified'
 		elsif args['recipient'].nil?
 			return 'defer_if_permit No recipient specified'
+		end
+
+		domain = domain_from_addrspec(args['sender'])
+		if domain.empty?
+			logger.info("deferred mail with domainless sender #{args['sender']}")
+			return 'defer_if_permit Invalid sender'
+		end
+		if @blacklisted_sender_domains.key? domain
+			logger.info("rejected mail from blacklisted sender domain #{domain} (from #{args['sender']})")
+			return 'reject Invalid sender'
 		end
 
 		maybe_reject_email(args['sender'], args['recipient'])

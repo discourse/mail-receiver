@@ -43,6 +43,13 @@ For example, if you wanted to add a pre-delivery milter, you might use:
     -e POSTCONF_smtpd_milters=192.0.2.42:12345
 
 
+## Blacklisting sender domains
+
+The `BLACKLISTED_SENDER_DOMAINS` environment variable accepts a
+space-separated list of domain names.  Mail messages from these senders will
+be fast-failed with SMTP code 554.
+
+
 ## Syslog integration
 
 Postfix loves to log everything to syslog.  In fact, that's really all it

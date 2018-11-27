@@ -55,6 +55,36 @@ describe FastRejection do
 			expect(response).to start_with('defer_if_permit')
 		end
 
+		it "returns defer_if_permit if sender addr-spec contains no domain" do
+			response = receiver.process_single_request(
+				'request' => 'smtpd_access_policy',
+				'protocol_state' => 'RCPT',
+				'sender' => 'miscreant',
+				'recipient' => 'discourse@example.com'
+			)
+			expect(response).to start_with('defer_if_permit')
+		end
+
+		it "returns reject if sender domain is blacklisted" do
+			response = receiver.process_single_request(
+				'request' => 'smtpd_access_policy',
+				'protocol_state' => 'RCPT',
+				'sender' => 'miscreant@bad.com',
+				'recipient' => 'discourse@example.com'
+			)
+			expect(response).to start_with('reject')
+		end
+
+		it "returns reject if sender domain is blacklisted with differing case" do
+			response = receiver.process_single_request(
+				'request' => 'smtpd_access_policy',
+				'protocol_state' => 'RCPT',
+				'sender' => 'miscreant@SaD.NeT',
+				'recipient' => 'discourse@example.com'
+			)
+			expect(response).to start_with('reject')
+		end
+
 		it "returns dunno if everything looks good" do
 			expect_any_instance_of(Net::HTTP).to receive(:request) do |http|
 				response = Net::HTTPSuccess.new(http, 200, "OK")
