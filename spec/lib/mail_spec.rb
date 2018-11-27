@@ -1,0 +1,13 @@
+require_relative '../../lib/mail_receiver/mail'
+
+RSpec.describe 'domain_from_addrspec' do
+
+	it "normalises domains to lowercase" do
+		expect(domain_from_addrspec("local-part@DOMAIN.NET")).to eq "domain.net"
+	end
+
+	it "returns an empty string if a domain was not found" do
+		expect(domain_from_addrspec("local-part")).to be_empty
+	end
+
+end
