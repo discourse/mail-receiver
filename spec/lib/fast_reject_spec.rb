@@ -1,4 +1,4 @@
-require_relative '../../lib/fast_rejection'
+require_relative '../../lib/mail_receiver/fast_rejection'
 
 describe FastRejection do
 

@@ -1,4 +1,4 @@
-require_relative '../../lib/discourse_mail_receiver'
+require_relative '../../lib/mail_receiver/discourse_mail_receiver'
 
 RSpec.describe MailReceiverBase do
 
