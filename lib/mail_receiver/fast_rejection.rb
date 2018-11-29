@@ -1,3 +1,4 @@
+require 'set'
 require 'syslog'
 require 'json'
 require 'uri'
@@ -14,9 +15,7 @@ class FastRejection < MailReceiverBase
 
 		@disabled = @env['DISCOURSE_FAST_REJECTION_DISABLED'] || !@env['DISCOURSE_BASE_URL']
 
-		@blacklisted_sender_domains = Hash[
-			@env.fetch('BLACKLISTED_SENDER_DOMAINS', "").split(" ").map { |v| [v.downcase, nil] }
-		]
+		@blacklisted_sender_domains = @env.fetch('BLACKLISTED_SENDER_DOMAINS', "").split(" ").map(&:downcase).to_set
 	end
 
 	def disabled?
@@ -60,7 +59,7 @@ class FastRejection < MailReceiverBase
 			logger.info("deferred mail with domainless sender #{args['sender']}")
 			return 'defer_if_permit Invalid sender'
 		end
-		if @blacklisted_sender_domains.key? domain
+		if @blacklisted_sender_domains.include? domain
 			logger.info("rejected mail from blacklisted sender domain #{domain} (from #{args['sender']})")
 			return 'reject Invalid sender'
 		end
