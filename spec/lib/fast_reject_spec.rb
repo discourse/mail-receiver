@@ -41,9 +41,25 @@ describe FastRejection do
 		it "returns defer_if_permit if no sender" do
 			response = receiver.process_single_request(
 				'request' => 'smtpd_access_policy',
-				'protocol_state' => 'RCPT'
+				'protocol_state' => 'RCPT',
+				'recipient' => 'discourse@example.com'
 			)
 			expect(response).to start_with('defer_if_permit')
+		end
+
+		it "returns dunno if from the null sender" do
+			expect_any_instance_of(Net::HTTP).to receive(:request) do |http|
+				response = Net::HTTPSuccess.new(http, 200, "OK")
+				expect(response).to receive(:body) { "{}" }
+				response
+			end
+			response = receiver.process_single_request(
+				'request' => 'smtpd_access_policy',
+				'protocol_state' => 'RCPT',
+				'sender' => '',
+				'recipient' => 'discourse@example.com'
+			)
+			expect(response).to eq('dunno')
 		end
 
 		it "returns defer_if_permit if no recipient" do

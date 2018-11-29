@@ -49,33 +49,51 @@ class FastRejection < MailReceiverBase
 		elsif args['protocol_state'] != 'RCPT'
 			return 'dunno'
 		elsif args['sender'].nil?
+			# Note that while this key should always exist, its value may be the empty
+			# string.  Postfix will convert the "<>" null sender to "".
 			return 'defer_if_permit No sender specified'
 		elsif args['recipient'].nil?
 			return 'defer_if_permit No recipient specified'
 		end
 
-		domain = domain_from_addrspec(args['sender'])
+		run_filters(args)
+	end
+
+	def run_filters(args)
+		filters = [
+			:maybe_reject_by_sender_domain,
+			:maybe_reject_by_api,
+		]
+
+		for f in filters do
+			action = send(f, args)
+			break unless action == "dunno"
+		end
+		action
+	end
+
+	def maybe_reject_by_sender_domain(args)
+		sender = args['sender']
+
+		return "dunno" if sender.empty?
+
+		domain = domain_from_addrspec(sender)
 		if domain.empty?
-			logger.info("deferred mail with domainless sender #{args['sender']}")
+			logger.info("deferred mail with domainless sender #{sender}")
 			return 'defer_if_permit Invalid sender'
 		end
 		if @blacklisted_sender_domains.include? domain
-			logger.info("rejected mail from blacklisted sender domain #{domain} (from #{args['sender']})")
+			logger.info("rejected mail from blacklisted sender domain #{domain} (from #{sender})")
 			return 'reject Invalid sender'
 		end
 
-		maybe_reject_email(args['sender'], args['recipient'])
+		return "dunno"
 	end
 
-	def endpoint
-		"#{@env['DISCOURSE_BASE_URL']}/admin/email/smtp_should_reject.json"
-	end
-
-	def maybe_reject_email(from, to)
-
+	def maybe_reject_by_api(args)
 		uri = URI.parse(endpoint)
-		fromarg = CGI::escape(from)
-		toarg = CGI::escape(to)
+		fromarg = CGI::escape(args['sender'])
+		toarg = CGI::escape(args['recipient'])
 
 		api_qs = "api_key=#{key}&api_username=#{username}&from=#{fromarg}&to=#{toarg}"
 		if uri.query and !uri.query.empty?
@@ -108,6 +126,10 @@ class FastRejection < MailReceiverBase
 		end
 
 		return "dunno"  # let future tests also be allowed to reject this one.
+	end
+
+	def endpoint
+		"#{@env['DISCOURSE_BASE_URL']}/admin/email/smtp_should_reject.json"
 	end
 
 end
