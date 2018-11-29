@@ -59,41 +59,10 @@ class FastRejection < MailReceiverBase
 		run_filters(args)
 	end
 
-	def run_filters(args)
-		filters = [
-			:maybe_reject_by_sender_domain,
-			:maybe_reject_by_api,
-		]
-
-		for f in filters do
-			action = send(f, args)
-			break unless action == "dunno"
-		end
-		action
-	end
-
-	def maybe_reject_by_sender_domain(args)
-		sender = args['sender']
-
-		return "dunno" if sender.empty?
-
-		domain = domain_from_addrspec(sender)
-		if domain.empty?
-			logger.info("deferred mail with domainless sender #{sender}")
-			return 'defer_if_permit Invalid sender'
-		end
-		if @blacklisted_sender_domains.include? domain
-			logger.info("rejected mail from blacklisted sender domain #{domain} (from #{sender})")
-			return 'reject Invalid sender'
-		end
-
-		return "dunno"
-	end
-
-	def maybe_reject_by_api(args)
+	def maybe_reject_email(from, to)
 		uri = URI.parse(endpoint)
-		fromarg = CGI::escape(args['sender'])
-		toarg = CGI::escape(args['recipient'])
+		fromarg = CGI::escape(from)
+		toarg = CGI::escape(to)
 
 		api_qs = "api_key=#{key}&api_username=#{username}&from=#{fromarg}&to=#{toarg}"
 		if uri.query and !uri.query.empty?
@@ -130,6 +99,43 @@ class FastRejection < MailReceiverBase
 
 	def endpoint
 		"#{@env['DISCOURSE_BASE_URL']}/admin/email/smtp_should_reject.json"
+	end
+
+	private
+
+	def run_filters(args)
+		filters = [
+			:maybe_reject_by_sender_domain,
+			:maybe_reject_by_api,
+		]
+
+		for f in filters do
+			action = send(f, args)
+			break unless action == "dunno"
+		end
+		action
+	end
+
+	def maybe_reject_by_sender_domain(args)
+		sender = args['sender']
+
+		return "dunno" if sender.empty?
+
+		domain = domain_from_addrspec(sender)
+		if domain.empty?
+			logger.info("deferred mail with domainless sender #{sender}")
+			return 'defer_if_permit Invalid sender'
+		end
+		if @blacklisted_sender_domains.include? domain
+			logger.info("rejected mail from blacklisted sender domain #{domain} (from #{sender})")
+			return 'reject Invalid sender'
+		end
+
+		return "dunno"
+	end
+
+	def maybe_reject_by_api(args)
+		maybe_reject_email(args['sender'], args['recipient'])
 	end
 
 end
