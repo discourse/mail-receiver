@@ -100,3 +100,6 @@ Layout/AlignHash:
 
 Bundler/OrderedGems:
   Enabled: false
+
+Style/RedundantReturn:
+  Enabled: true
