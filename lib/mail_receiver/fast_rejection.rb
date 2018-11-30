@@ -35,7 +35,7 @@ class FastRejection < MailReceiverBase
 
 				args = {}  # reset for next request.
 			else
-				k,v = line.chomp.split('=', 2)
+				k, v = line.chomp.split('=', 2)
 				args[k] = v
 			end
 		end
@@ -65,7 +65,7 @@ class FastRejection < MailReceiverBase
 		toarg = CGI::escape(to)
 
 		api_qs = "api_key=#{key}&api_username=#{username}&from=#{fromarg}&to=#{toarg}"
-		if uri.query and !uri.query.empty?
+		if uri.query && !uri.query.empty?
 			uri.query += "&#{api_qs}"
 		else
 			uri.query = api_qs
@@ -94,7 +94,7 @@ class FastRejection < MailReceiverBase
 			return "defer_if_permit Internal error, API request failed"
 		end
 
-		return "dunno"  # let future tests also be allowed to reject this one.
+		"dunno"  # let future tests also be allowed to reject this one.
 	end
 
 	def endpoint
@@ -109,11 +109,12 @@ class FastRejection < MailReceiverBase
 			:maybe_reject_by_api,
 		]
 
-		for f in filters do
+		filters.each do |f|
 			action = send(f, args)
-			break unless action == "dunno"
+			return action if action != "dunno"
 		end
-		action
+
+		"dunno"
 	end
 
 	def maybe_reject_by_sender_domain(args)
@@ -131,7 +132,7 @@ class FastRejection < MailReceiverBase
 			return 'reject Invalid sender'
 		end
 
-		return "dunno"
+		"dunno"
 	end
 
 	def maybe_reject_by_api(args)

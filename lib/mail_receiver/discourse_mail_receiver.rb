@@ -6,7 +6,7 @@ require_relative 'mail_receiver_base'
 
 class DiscourseMailReceiver < MailReceiverBase
 
-	def initialize(env_file=nil, recipient=nil, mail=nil)
+	def initialize(env_file = nil, recipient = nil, mail = nil)
 		super(env_file)
 
 		@recipient = recipient
@@ -31,7 +31,7 @@ class DiscourseMailReceiver < MailReceiverBase
 	def process
 		uri = URI.parse(endpoint)
 		api_qs = "api_key=#{key}&api_username=#{username}"
-		if uri.query and !uri.query.empty?
+		if uri.query && !uri.query.empty?
 			uri.query += "&#{api_qs}"
 		else
 			uri.query = api_qs
