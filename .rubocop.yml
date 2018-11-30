@@ -27,10 +27,6 @@ Layout/EmptyLines:
 Style/HashSyntax:
   Enabled: true
 
-# Two spaces, no tabs (for indentation).
-Layout/IndentationWidth:
-  Enabled: true
-
 Layout/SpaceAfterColon:
   Enabled: true
 
@@ -66,10 +62,6 @@ Layout/SpaceInsideHashLiteralBraces:
   Enabled: true
 
 Layout/SpaceInsideParens:
-  Enabled: true
-
-# Detect hard tabs, no hard tabs.
-Layout/Tab:
   Enabled: true
 
 # Blank lines should not have any spaces.
