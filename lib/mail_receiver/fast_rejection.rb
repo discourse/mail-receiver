@@ -109,11 +109,12 @@ class FastRejection < MailReceiverBase
 			:maybe_reject_by_api,
 		]
 
-		for f in filters do
+		filters.each do |f|
 			action = send(f, args)
-			break unless action == "dunno"
+			return action if action != "dunno"
 		end
-		action
+
+		"dunno"
 	end
 
 	def maybe_reject_by_sender_domain(args)
