@@ -7,14 +7,14 @@ EX_SUCCESS  = 0
 require 'mail_receiver/discourse_mail_receiver'
 
 if __FILE__ == $0
-	begin
-		receiver = DiscourseMailReceiver.new(ENV_FILE, ARGV.first, $stdin.read)
-		exit (receiver.process == :success) ? EX_SUCCESS : EX_TEMPFAIL
+  begin
+    receiver = DiscourseMailReceiver.new(ENV_FILE, ARGV.first, $stdin.read)
+    exit (receiver.process == :success) ? EX_SUCCESS : EX_TEMPFAIL
 
-	rescue StandardError => ex
-		MailReceiverBase.logger.err "Unexpected error while invoking mail processor: %s (%s)", ex.message, ex.class
-		MailReceiverBase.logger.err ex.backtrace.map { |l| "  #{l}" }.join("\n")
+  rescue StandardError => ex
+    MailReceiverBase.logger.err "Unexpected error while invoking mail processor: %s (%s)", ex.message, ex.class
+    MailReceiverBase.logger.err ex.backtrace.map { |l| "  #{l}" }.join("\n")
 
-		exit EX_TEMPFAIL
-	end
+    exit EX_TEMPFAIL
+  end
 end

@@ -5,6 +5,6 @@ ENV_FILE = "/etc/postfix/mail-receiver-environment.json"
 require 'mail_receiver/fast_rejection'
 
 if __FILE__ == $0
-	receiver = FastRejection.new(ENV_FILE)
-	receiver.process
+  receiver = FastRejection.new(ENV_FILE)
+  receiver.process
 end

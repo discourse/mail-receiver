@@ -6,5 +6,5 @@
 #
 # See section 3.4 of RFC 2822.
 def domain_from_addrspec(addrspec)
-	(addrspec.split("@", 2)[1] || "").downcase
+  (addrspec.split("@", 2)[1] || "").downcase
 end
