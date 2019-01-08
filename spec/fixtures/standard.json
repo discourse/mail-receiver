@@ -2,5 +2,6 @@
 	"DISCOURSE_API_KEY": "EXAMPLE_KEY",
 	"DISCOURSE_API_USERNAME": "eviltrout",
 	"DISCOURSE_BASE_URL": "https://localhost:8080",
+	"MAIL_DOMAIN": "example.com EXAMPLE.ORG",
 	"BLACKLISTED_SENDER_DOMAINS": "bad.com SAD.NET"
 }

@@ -101,6 +101,16 @@ describe FastRejection do
       expect(response).to start_with('reject')
     end
 
+    it "returns dunno if recipient domain is not a mail domain" do
+      response = receiver.process_single_request(
+        'request' => 'smtpd_access_policy',
+        'protocol_state' => 'RCPT',
+        'sender' => 'eviltrout@example.com',
+        'recipient' => 'discourse@example.net'
+      )
+      expect(response).to start_with('dunno')
+    end
+
     it "returns dunno if everything looks good" do
       expect_any_instance_of(Net::HTTP).to receive(:request) do |http|
         response = Net::HTTPSuccess.new(http, 200, "OK")
@@ -112,6 +122,21 @@ describe FastRejection do
         'protocol_state' => 'RCPT',
         'sender' => 'eviltrout@example.com',
         'recipient' => 'discourse@example.com'
+      )
+      expect(response).to eq("dunno")
+    end
+
+    it "returns dunno if everything looks good with differing case receiver domain" do
+      expect_any_instance_of(Net::HTTP).to receive(:request) do |http|
+        response = Net::HTTPSuccess.new(http, 200, "OK")
+        expect(response).to receive(:body) { "{}" }
+        response
+      end
+      response = receiver.process_single_request(
+        'request' => 'smtpd_access_policy',
+        'protocol_state' => 'RCPT',
+        'sender' => 'eviltrout@example.com',
+        'recipient' => 'discourse@example.org'
       )
       expect(response).to eq("dunno")
     end

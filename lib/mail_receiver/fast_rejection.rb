@@ -16,6 +16,7 @@ class FastRejection < MailReceiverBase
     @disabled = @env['DISCOURSE_FAST_REJECTION_DISABLED'] || !@env['DISCOURSE_BASE_URL']
 
     @blacklisted_sender_domains = @env.fetch('BLACKLISTED_SENDER_DOMAINS', "").split(" ").map(&:downcase).to_set
+    @mail_domain = @env.fetch('MAIL_DOMAIN', "").split(" ").map(&:downcase).to_set
   end
 
   def disabled?
@@ -136,7 +137,13 @@ class FastRejection < MailReceiverBase
   end
 
   def maybe_reject_by_api(args)
-    maybe_reject_email(args['sender'], args['recipient'])
+    sender = args['sender']
+    recipient = args['recipient']
+
+    domain = domain_from_addrspec(recipient)
+    return "dunno" unless @mail_domain.include? domain
+
+    maybe_reject_email(sender, recipient)
   end
 
 end
