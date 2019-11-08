@@ -64,17 +64,19 @@ class FastRejection < MailReceiverBase
     fromarg = CGI::escape(from)
     toarg = CGI::escape(to)
 
-    api_qs = "api_key=#{key}&api_username=#{username}&from=#{fromarg}&to=#{toarg}"
+    qs = "from=#{fromarg}&to=#{toarg}"
     if uri.query && !uri.query.empty?
-      uri.query += "&#{api_qs}"
+      uri.query += "&#{qs}"
     else
-      uri.query = api_qs
+      uri.query = qs
     end
 
     begin
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = uri.scheme == "https"
       get = Net::HTTP::Get.new(uri.request_uri)
+      get["Api-Username"] = username
+      get["Api-Key"] = key
       response = http.request(get)
     rescue StandardError => ex
       logger.err "Failed to GET smtp_should_reject answer from %s: %s (%s)", endpoint, ex.message, ex.class

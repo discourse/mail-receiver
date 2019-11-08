@@ -30,17 +30,13 @@ class DiscourseMailReceiver < MailReceiverBase
 
   def process
     uri = URI.parse(endpoint)
-    api_qs = "api_key=#{key}&api_username=#{username}"
-    if uri.query && !uri.query.empty?
-      uri.query += "&#{api_qs}"
-    else
-      uri.query = api_qs
-    end
 
     begin
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = uri.scheme == "https"
       post = Net::HTTP::Post.new(uri.request_uri)
+      post["Api-Username"] = username
+      post["Api-Key"] = key
       post.set_form_data(email: @mail)
 
       response = http.request(post)
