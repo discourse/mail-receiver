@@ -25,6 +25,7 @@ RUN >/etc/postfix/main.cf \
 COPY receive-mail discourse-smtp-fast-rejection /usr/local/bin/
 COPY lib/ /usr/local/lib/ruby/site_ruby/
 COPY boot /sbin/
+COPY fake-pups /pups/bin/pups
 
 ADD https://github.com/mpalmer/socketee/releases/download/v0.0.2/socketee /usr/local/bin/
 RUN chmod 0755 /usr/local/bin/socketee
