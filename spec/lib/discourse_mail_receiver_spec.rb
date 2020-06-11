@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative '../../lib/mail_receiver/discourse_mail_receiver'
 
 RSpec.describe DiscourseMailReceiver do

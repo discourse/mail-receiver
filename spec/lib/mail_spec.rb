@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative '../../lib/mail_receiver/mail'
 
 RSpec.describe 'domain_from_addrspec' do
