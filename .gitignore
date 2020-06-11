@@ -1,1 +1,3 @@
-Gemfile.lock
+.rubocop-https---raw-githubusercontent-com-discourse-discourse-master--rubocop-yml
+/vendor
+*.orig

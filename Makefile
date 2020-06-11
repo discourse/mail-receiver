@@ -5,13 +5,19 @@ all:
 .PHONY: all
 
 
-lint:
-	rubocop
+bundle:
+	bundle install --quiet
+
+.PHONY: bundle
+
+
+lint: bundle
+	bundle exec rubocop
 
 .PHONY: lint
 
 
-test:
-	rspec
+test: bundle
+	bundle exec rspec
 
 .PHONY: test
