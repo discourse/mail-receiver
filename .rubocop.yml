@@ -1,1 +1,4 @@
 inherit_from: https://raw.githubusercontent.com/discourse/discourse/master/.rubocop.yml
+
+RSpec/MessageSpies:
+  Enabled: false
