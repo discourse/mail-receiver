@@ -1,0 +1,23 @@
+PATH
+  remote: .
+  specs:
+    discourse_mail_receiver (1.0.0)
+      mail (~> 2.7.1)
+
+GEM
+  remote: https://rubygems.org/
+  specs:
+    mail (2.7.1)
+      mini_mime (>= 0.1.1)
+    mini_mime (1.0.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  bundler (~> 2.0)
+  discourse_mail_receiver!
+  mail (~> 2.7.1)
+
+BUNDLED WITH
+   2.1.4
