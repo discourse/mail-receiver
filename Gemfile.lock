@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    discourse_mail_receiver (1.0.0)
+    discourse_mail_receiver (4.0.2)
       mail (~> 2.7.1)
 
 GEM
