@@ -79,3 +79,9 @@ later sending out reply emails due to incoming spam ("backscatter").
 Legitimate users will be notified of the failure by their MTA, and obvious
 spam just gets dropped without reply. This step is just about being a good
 citizen of the Internet and not full spam filtering.
+
+### Development Note
+
+When changing files in the lib/ directory, make sure to publish a new rubygems
+version once you are done by bumping the version in discourse_mail_receiver.gemspec
+and tagging a version starting with `v` in git e.g. `v1.0.4`, then push.
