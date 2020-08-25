@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name          = 'discourse_mail_receiver'
-  spec.version       = '4.0.4'
+  spec.version       = '4.0.5'
   spec.authors       = ['Discourse Team']
   spec.email         = ['team@discourse.org']
   spec.description   = %q{A gem used to package the core .rb files of the mail-receiver.}
