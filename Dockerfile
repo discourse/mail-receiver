@@ -1,8 +1,9 @@
-FROM ruby:2.3-alpine
+FROM debian:buster-slim
 
-RUN apk update \
-	&& apk add postfix socat bash \
-	&& rm -f /var/cache/apk/*
+RUN DEBIAN_FRONTEND=noninteractive apt update \
+	&& DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends curl perl postfix ruby socat \
+	&& DEBIAN_FRONTEND=noninteractive apt -y --purge autoremove \
+	&& DEBIAN_FRONTEND=noninteractive apt clean
 
 EXPOSE 25
 VOLUME /var/spool/postfix
@@ -27,8 +28,8 @@ COPY lib/ /usr/local/lib/ruby/site_ruby/
 COPY boot /sbin/
 COPY fake-pups /pups/bin/pups
 
-ADD https://github.com/discourse/socketee/releases/download/v0.0.2/socketee /usr/local/bin/
-RUN echo '7cd6df7aeeac0cce35c84e842b3cda5a4c36a301  /usr/local/bin/socketee' | sha1sum -c - \
+RUN curl -sL https://github.com/discourse/socketee/releases/download/v0.0.2/socketee -o /usr/local/bin/socketee \
+	&& echo '7cd6df7aeeac0cce35c84e842b3cda5a4c36a301  /usr/local/bin/socketee' | sha1sum -c - \
 	&& chmod 0755 /usr/local/bin/socketee
 
 CMD ["/sbin/boot"]

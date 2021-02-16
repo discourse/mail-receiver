@@ -59,4 +59,4 @@ chown root:root /var/spool/postfix
 echo "Starting Postfix" >&2
 
 # Finally, let postfix-master do its thing
-exec /usr/lib/postfix/master -c /etc/postfix -d
+exec /usr/lib/postfix/sbin/master -c /etc/postfix -d
