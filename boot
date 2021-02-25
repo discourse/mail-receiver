@@ -54,6 +54,13 @@ done
 mkdir -p -m 0755 /var/spool/postfix/pid
 chown root:root /var/spool/postfix
 
+# Permissions are sensitive for postfix to work correctly; ensure the directory
+# permissions are set as expected.
+chown --recursive postfix:root /var/spool/postfix/*
+[[ -d /var/spool/postfix/maildrop ]] && chown --recursive postfix:postdrop /var/spool/postfix/maildrop
+[[ -d /var/spool/postfix/public ]] && chown --recursive postfix:postdrop /var/spool/postfix/public
+chown --recursive root:root /var/spool/postfix/pid
+
 /usr/sbin/postfix check >&2
 
 echo "Starting Postfix" >&2
