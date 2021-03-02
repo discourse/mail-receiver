@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 # Parse and return the domain from an Internet addr-spec.  Return value is
 # normalised to lowercase.
 #

@@ -10,3 +10,8 @@ rescue Bundler::BundlerError => error
   $stderr.puts "Run `bundle install` to install missing gems"
   exit error.status_code
 end
+
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new :test
+
+task default: :test

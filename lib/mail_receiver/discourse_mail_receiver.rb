@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'syslog'
 require 'json'
 require "uri"

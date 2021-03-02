@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require_relative '../../lib/mail_receiver/fast_rejection'
 
 describe FastRejection do
@@ -50,7 +51,7 @@ describe FastRejection do
     it "returns dunno if from the null sender" do
       expect_any_instance_of(Net::HTTP).to receive(:request) do |http|
         response = Net::HTTPSuccess.new(http, 200, "OK")
-        expect(response).to receive(:body) { "{}" }
+        allow(response).to receive(:body).and_return("{}")
         response
       end
       response = receiver.process_single_request(
@@ -104,7 +105,7 @@ describe FastRejection do
     it "returns dunno if everything looks good" do
       expect_any_instance_of(Net::HTTP).to receive(:request) do |http|
         response = Net::HTTPSuccess.new(http, 200, "OK")
-        expect(response).to receive(:body) { "{}" }
+        allow(response).to receive(:body).and_return("{}")
         response
       end
       response = receiver.process_single_request(
@@ -132,9 +133,7 @@ describe FastRejection do
     it "rejects if the HTTP response has reject in the JSON" do
       expect_any_instance_of(Net::HTTP).to receive(:request) do |http|
         response = Net::HTTPSuccess.new(http, 200, "OK")
-        expect(response).to receive(:body) {
-          '{"reject": true, "reason": "because I said so"}'
-        }
+        allow(response).to receive(:body).and_return('{"reject": true, "reason": "because I said so"}')
         response
       end
       response = receiver.process_single_request(

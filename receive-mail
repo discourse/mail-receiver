@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 ENV_FILE    = "/etc/postfix/mail-receiver-environment.json"
 EX_TEMPFAIL = 75
