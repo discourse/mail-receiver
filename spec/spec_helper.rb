@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module FileHelpers
   def file_for(name)
     File.expand_path("../fixtures/#{name}.json", __FILE__)

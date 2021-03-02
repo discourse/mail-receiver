@@ -1,5 +1,6 @@
+# frozen_string_literal: true
 class MailReceiverBase
-  class ReceiverException < StandardError; end;
+  class ReceiverException < StandardError; end
 
   attr_reader :env
 
