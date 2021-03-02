@@ -18,5 +18,3 @@ tmp
 *.swp
 .DS_Store
 Gemfile.lock
-
-.rubocop-https---raw-githubusercontent-com-discourse-discourse-master--rubocop-yml
