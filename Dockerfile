@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 
 RUN DEBIAN_FRONTEND=noninteractive apt update \
 	&& DEBIAN_FRONTEND=noninteractive apt install -y --no-install-recommends curl perl postfix ruby socat \
