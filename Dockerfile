@@ -9,6 +9,7 @@ EXPOSE 25
 VOLUME /var/spool/postfix
 
 RUN >/etc/postfix/main.cf \
+	&& postconf -e maillog_file=/dev/stdout \
 	&& postconf -e smtputf8_enable=no \
 	&& postconf -e compatibility_level=2 \
 	&& postconf -e export_environment='TZ LANG' \
