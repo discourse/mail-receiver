@@ -5,7 +5,7 @@ class MailReceiverBase
   attr_reader :env
 
   def initialize(env_file)
-    unless File.exists?(env_file)
+    unless File.exist?(env_file)
       fatal "Config file %s does not exist. Aborting.", env_file
     end
 

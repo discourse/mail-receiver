@@ -3,6 +3,7 @@ require 'syslog'
 require 'json'
 require "uri"
 require "net/http"
+require "base64"
 require_relative 'mail_receiver_base'
 
 class DiscourseMailReceiver < MailReceiverBase
@@ -38,7 +39,7 @@ class DiscourseMailReceiver < MailReceiverBase
       post = Net::HTTP::Post.new(uri.request_uri)
       post["Api-Username"] = username
       post["Api-Key"] = key
-      post.set_form_data(email: @mail)
+      post.set_form_data(email_encoded: Base64.strict_encode64(@mail))
 
       response = http.request(post)
     rescue StandardError => ex
