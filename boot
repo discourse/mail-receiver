@@ -7,7 +7,9 @@ set -e
 if [ -z "$SOCKETEE_RELAY_SOCKET" ]; then
 	/usr/bin/socat UNIX-RECV:/dev/log,mode=0666 stderr &
 else
-	/usr/local/bin/socketee /dev/log "$SOCKETEE_RELAY_SOCKET" &
+#	/usr/local/bin/socketee /dev/log "$SOCKETEE_RELAY_SOCKET" &
+	echo "SOCKETEE_RELAY_SOCKET is not (yet) supported on arm64; see arm64 section of README for more info" >&2
+  exit 1
 fi
 
 echo "Operating environment:" >&2
