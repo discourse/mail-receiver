@@ -42,6 +42,15 @@ For example, if you wanted to add a pre-delivery milter, you might use:
 
     -e POSTCONF_smtpd_milters=192.0.2.42:12345
 
+## SPF, DKIM and DMARC checks
+These checks are enabled by default in the latest image `discourse/mail-receiver:release`.
+
+You may also decide whether or not to set up a Postfix server that has SPF, DKIM and DMARC checks configured by setting the build argument `INCLUDE_DMARC` to `true` or `false` when building the docker container for mail-receiver:
+
+```bash
+docker build --build-arg INCLUDE_DMARC=true -t local_discourse/mail-receiver:latest .
+```
+Configurations for these checks are stored in their respective configuration files `policyd-spf.conf`, `opendkim.conf`, `opendmarc.conf` in this repository.
 
 ## Blacklisting sender domains
 
