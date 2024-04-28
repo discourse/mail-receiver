@@ -52,6 +52,16 @@ for envvar in $(compgen -v); do
 	fi
 done
 
+if [ "$INCLUDE_DMARC" = "true" ]; then
+  echo "Starting OpenDKIM..." >&2
+  adduser postfix opendkim #ensure postfix is part of opendkim group so it can access the socket
+  /usr/sbin/opendkim -x /etc/opendkim.conf
+
+  echo "Starting OpenDMARC..." >&2
+  adduser postfix opendmarc #ensure postfix is part of opendmarc group so it can access the socket
+  /usr/sbin/opendmarc -c /etc/opendmarc.conf
+fi
+
 # Now, make sure that the Postfix filesystem environment is sane
 mkdir -p -m 0755 /var/spool/postfix/pid
 chown root:root /var/spool/postfix
