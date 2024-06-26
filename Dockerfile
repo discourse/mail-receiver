@@ -1,6 +1,6 @@
 FROM debian:bullseye-slim
 
-ARG INCLUDE_DMARC=false
+ARG INCLUDE_DMARC=true
 ENV INCLUDE_DMARC=${INCLUDE_DMARC}
 
 RUN DEBIAN_FRONTEND=noninteractive apt update \
