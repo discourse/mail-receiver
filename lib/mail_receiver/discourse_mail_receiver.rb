@@ -1,12 +1,11 @@
 # frozen_string_literal: true
-require 'syslog'
-require 'json'
+require "syslog"
+require "json"
 require "uri"
 require "net/http"
-require_relative 'mail_receiver_base'
+require_relative "mail_receiver_base"
 
 class DiscourseMailReceiver < MailReceiverBase
-
   def initialize(env_file = nil, recipient = nil, mail = nil)
     super(env_file)
 
@@ -23,8 +22,8 @@ class DiscourseMailReceiver < MailReceiverBase
 
     @endpoint = @env["DISCOURSE_MAIL_ENDPOINT"]
 
-    if @env['DISCOURSE_BASE_URL']
-      @endpoint = "#{@env['DISCOURSE_BASE_URL']}/admin/email/handle_mail"
+    if @env["DISCOURSE_BASE_URL"]
+      @endpoint = "#{@env["DISCOURSE_BASE_URL"]}/admin/email/handle_mail"
     end
     @endpoint
   end
@@ -55,5 +54,4 @@ class DiscourseMailReceiver < MailReceiverBase
     logger.err "Failed to POST the e-mail to %s: %s", endpoint, response.code
     :failure
   end
-
 end
