@@ -6,7 +6,7 @@ $LOAD_PATH.unshift(lib) if !$LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name = "discourse_mail_receiver"
-  spec.version = "4.1.0"
+  spec.version = "4.0.8"
   spec.authors = ["Discourse Team"]
   spec.email = ["team@discourse.org"]
   spec.description = "A gem used to package the core .rb files of the mail-receiver."
@@ -20,7 +20,6 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "mail", "~> 2.7.1"
-  # spec.add_development_dependency 'bundler', '~> 2.0'
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rubocop-discourse"
