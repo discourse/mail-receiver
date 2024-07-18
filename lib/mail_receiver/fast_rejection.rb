@@ -1,22 +1,21 @@
 # frozen_string_literal: true
-require 'set'
-require 'syslog'
-require 'json'
-require 'uri'
-require 'cgi'
-require 'net/http'
+require "syslog"
+require "json"
+require "uri"
+require "cgi"
+require "net/http"
 
-require_relative 'mail'
-require_relative 'mail_receiver_base'
+require_relative "mail"
+require_relative "mail_receiver_base"
 
 class FastRejection < MailReceiverBase
-
   def initialize(env_file)
     super(env_file)
 
-    @disabled = @env['DISCOURSE_FAST_REJECTION_DISABLED'] || !@env['DISCOURSE_BASE_URL']
+    @disabled = @env["DISCOURSE_FAST_REJECTION_DISABLED"] || !@env["DISCOURSE_BASE_URL"]
 
-    @blacklisted_sender_domains = @env.fetch('BLACKLISTED_SENDER_DOMAINS', "").split(" ").map(&:downcase).to_set
+    @blacklisted_sender_domains =
+      @env.fetch("BLACKLISTED_SENDER_DOMAINS", "").split(" ").map(&:downcase).to_set
   end
 
   def disabled?
@@ -24,7 +23,7 @@ class FastRejection < MailReceiverBase
   end
 
   def process
-    $stdout.sync = true   # unbuffered output
+    $stdout.sync = true # unbuffered output
 
     args = {}
     while line = gets
@@ -32,29 +31,29 @@ class FastRejection < MailReceiverBase
       line = line.chomp
       if line.empty?
         puts "action=#{process_single_request(args)}"
-        puts ''
+        puts ""
 
-        args = {}  # reset for next request.
+        args = {} # reset for next request.
       else
-        k, v = line.chomp.split('=', 2)
+        k, v = line.chomp.split("=", 2)
         args[k] = v
       end
     end
   end
 
   def process_single_request(args)
-    return 'dunno' if disabled?
+    return "dunno" if disabled?
 
-    if args['request'] != 'smtpd_access_policy'
-      return 'defer_if_permit Internal error, Request type invalid'
-    elsif args['protocol_state'] != 'RCPT'
-      return 'dunno'
-    elsif args['sender'].nil?
+    if args["request"] != "smtpd_access_policy"
+      return "defer_if_permit Internal error, Request type invalid"
+    elsif args["protocol_state"] != "RCPT"
+      return "dunno"
+    elsif args["sender"].nil?
       # Note that while this key should always exist, its value may be the empty
       # string.  Postfix will convert the "<>" null sender to "".
-      return 'defer_if_permit No sender specified'
-    elsif args['recipient'].nil?
-      return 'defer_if_permit No recipient specified'
+      return "defer_if_permit No sender specified"
+    elsif args["recipient"].nil?
+      return "defer_if_permit No recipient specified"
     end
 
     run_filters(args)
@@ -62,8 +61,8 @@ class FastRejection < MailReceiverBase
 
   def maybe_reject_email(from, to)
     uri = URI.parse(endpoint)
-    fromarg = CGI::escape(from)
-    toarg = CGI::escape(to)
+    fromarg = CGI.escape(from)
+    toarg = CGI.escape(to)
 
     qs = "from=#{fromarg}&to=#{toarg}"
     if uri.query && !uri.query.empty?
@@ -80,7 +79,10 @@ class FastRejection < MailReceiverBase
       get["Api-Key"] = key
       response = http.request(get)
     rescue StandardError => ex
-      logger.err "Failed to GET smtp_should_reject answer from %s: %s (%s)", endpoint, ex.message, ex.class
+      logger.err "Failed to GET smtp_should_reject answer from %s: %s (%s)",
+                 endpoint,
+                 ex.message,
+                 ex.class
       logger.err ex.backtrace.map { |l| "  #{l}" }.join("\n")
       return "defer_if_permit Internal error, API request preparation failed"
     ensure
@@ -89,28 +91,23 @@ class FastRejection < MailReceiverBase
 
     if Net::HTTPSuccess === response
       reply = JSON.parse(response.body)
-      if reply['reject']
-        return "reject #{reply['reason']}"
-      end
+      return "reject #{reply["reason"]}" if reply["reject"]
     else
       logger.err "Failed to GET smtp_should_reject answer from %s: %s", endpoint, response.code
       return "defer_if_permit Internal error, API request failed"
     end
 
-    "dunno"  # let future tests also be allowed to reject this one.
+    "dunno" # let future tests also be allowed to reject this one.
   end
 
   def endpoint
-    "#{@env['DISCOURSE_BASE_URL']}/admin/email/smtp_should_reject.json"
+    "#{@env["DISCOURSE_BASE_URL"]}/admin/email/smtp_should_reject.json"
   end
 
   private
 
   def run_filters(args)
-    filters = [
-      :maybe_reject_by_sender_domain,
-      :maybe_reject_by_api,
-    ]
+    filters = %i[maybe_reject_by_sender_domain maybe_reject_by_api]
 
     filters.each do |f|
       action = send(f, args)
@@ -121,25 +118,24 @@ class FastRejection < MailReceiverBase
   end
 
   def maybe_reject_by_sender_domain(args)
-    sender = args['sender']
+    sender = args["sender"]
 
     return "dunno" if sender.empty?
 
     domain = domain_from_addrspec(sender)
     if domain.empty?
       logger.info("deferred mail with domainless sender #{sender}")
-      return 'defer_if_permit Invalid sender'
+      return "defer_if_permit Invalid sender"
     end
     if @blacklisted_sender_domains.include? domain
       logger.info("rejected mail from blacklisted sender domain #{domain} (from #{sender})")
-      return 'reject Invalid sender'
+      return "reject Invalid sender"
     end
 
     "dunno"
   end
 
   def maybe_reject_by_api(args)
-    maybe_reject_email(args['sender'], args['recipient'])
+    maybe_reject_email(args["sender"], args["recipient"])
   end
-
 end

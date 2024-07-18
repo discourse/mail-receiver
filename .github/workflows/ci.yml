@@ -4,43 +4,38 @@ on:
   pull_request:
   push:
     branches:
-      - master
       - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        ruby:
-          - 2.5
-          - 2.6
-          - 2.7
-          - 3.0
-
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Setup ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: "3.2"
           bundler-cache: true
 
-      - name: Lint
+      - name: Rubocop
         run: bundle exec rubocop
 
+      - name: Syntax Tree
+        run: |
+          set -E
+          bundle exec stree check Gemfile discourse_mail_receiver.gemspec $(git ls-files '*.rb')
       - name: Tests
         run: bundle exec rake test
 
   publish:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
       - name: Release Gem
         uses: discourse/publish-rubygems-action@v2-beta
