@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 require_relative '../../lib/mail_receiver/mail'
 
+# rubocop:disable RSpec/DescribeClass
+# mail.rb is not implemented as a class or module
 RSpec.describe 'domain_from_addrspec' do
 
   it "normalises domains to lowercase" do

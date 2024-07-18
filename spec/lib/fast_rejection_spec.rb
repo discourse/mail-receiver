@@ -23,7 +23,7 @@ describe FastRejection do
     expect(receiver.endpoint).to eq('https://localhost:8080/admin/email/smtp_should_reject.json')
   end
 
-  context "process_single_request" do
+  describe "#process_single_request" do
     let(:receiver) { described_class.new(file_for(:standard)) }
 
     it "returns defer_if_permit if not smtpd_access_policy" do
@@ -145,5 +145,4 @@ describe FastRejection do
       expect(response).to eq("reject because I said so")
     end
   end
-
 end
