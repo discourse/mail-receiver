@@ -19,6 +19,8 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "mail", "~> 2.7.1"
+  spec.add_runtime_dependency "net-smtp", "~> 0.3.3"
+
   spec.add_development_dependency "rake"
   spec.add_development_dependency "rspec"
   spec.add_development_dependency "rubocop-discourse"

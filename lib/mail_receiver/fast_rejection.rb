@@ -1,4 +1,8 @@
 # frozen_string_literal: true
+
+# rubocop:disable Lint/RedundantRequireStatement
+# require "set" is needed for Set
+require "set"
 require "syslog"
 require "json"
 require "uri"
@@ -15,7 +19,7 @@ class FastRejection < MailReceiverBase
     @disabled = @env["DISCOURSE_FAST_REJECTION_DISABLED"] || !@env["DISCOURSE_BASE_URL"]
 
     @blacklisted_sender_domains =
-      @env.fetch("BLACKLISTED_SENDER_DOMAINS", "").split(" ").map(&:downcase).to_set
+      Set.new(@env.fetch("BLACKLISTED_SENDER_DOMAINS", "").split(" ").map(&:downcase))
   end
 
   def disabled?

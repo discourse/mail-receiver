@@ -1,4 +1,4 @@
-FROM debian:bullseye-slim
+FROM debian:bookworm-slim
 
 ARG INCLUDE_DMARC=true
 ENV INCLUDE_DMARC=${INCLUDE_DMARC}
