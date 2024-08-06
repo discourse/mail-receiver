@@ -26,6 +26,7 @@ jobs:
         run: |
           set -E
           bundle exec stree check Gemfile discourse_mail_receiver.gemspec $(git ls-files '*.rb')
+
       - name: Tests
         run: bundle exec rake test
 
@@ -38,7 +39,7 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Release Gem
-        uses: discourse/publish-rubygems-action@v2-beta
+        uses: discourse/publish-rubygems-action@v3
         env:
           RUBYGEMS_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
           GIT_EMAIL: team@discourse.org
