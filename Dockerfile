@@ -51,8 +51,4 @@ COPY lib/ /usr/local/lib/site_ruby/
 COPY boot /sbin/
 COPY fake-pups /pups/bin/pups
 
-RUN curl -sL https://github.com/discourse/socketee/releases/download/v0.0.2/socketee -o /usr/local/bin/socketee \
-	&& echo '7cd6df7aeeac0cce35c84e842b3cda5a4c36a301  /usr/local/bin/socketee' | sha1sum -c - \
-	&& chmod 0755 /usr/local/bin/socketee
-
 CMD ["/sbin/boot"]
