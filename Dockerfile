@@ -1,4 +1,4 @@
-FROM debian:bookworm-slim
+FROM debian:trixie-slim
 
 ARG INCLUDE_DMARC=true
 ENV INCLUDE_DMARC=${INCLUDE_DMARC}
