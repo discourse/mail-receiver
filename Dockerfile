@@ -35,7 +35,6 @@ RUN >/etc/postfix/main.cf \
        fi \
 	&& postconf -M -e 'smtp/inet=smtp inet n - n - - smtpd' \
 	&& postconf -M -e 'discourse/unix=discourse unix - n n - - pipe user=nobody:nogroup argv=/usr/local/bin/receive-mail ${recipient}' \
-	&& postconf -M -e 'policy/unix=policy unix - n n - - spawn user=nobody argv=/usr/local/bin/discourse-smtp-fast-rejection' \
     && if [ "$INCLUDE_DMARC" = "true" ]; then \
           postconf -M -e 'policyd-spf/unix=policyd-spf unix - n n - - spawn user=nobody argv=/usr/bin/policyd-spf'; \
        fi \
@@ -46,7 +45,7 @@ COPY policyd-spf.conf /etc/postfix-policyd-spf-python/policyd-spf.conf
 COPY opendkim.conf /etc/opendkim.conf
 COPY opendmarc.conf /etc/opendmarc.conf
 
-COPY receive-mail discourse-smtp-fast-rejection /usr/local/bin/
+COPY receive-mail /usr/local/bin/
 COPY lib/ /usr/local/lib/site_ruby/
 COPY boot /sbin/
 COPY fake-pups /pups/bin/pups
