@@ -48,6 +48,7 @@ RSpec.describe DiscourseMailReceiver do
     receiver = described_class.new(file_for(:standard), "eviltrout@example.com", "test mail")
     expect(receiver.process).to eq(:failure)
   end
+  
   it "posts mail using the email_encoded parameter" do
     mail = "Subject: Test\r\n\r\nTest body\r\n"
 
