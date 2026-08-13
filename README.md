@@ -58,20 +58,6 @@ The `BLACKLISTED_SENDER_DOMAINS` environment variable accepts a
 space-separated list of domain names.  Mail messages from these senders will
 be fast-failed with SMTP code 554.
 
-
-## Syslog integration
-
-Postfix loves to log everything to syslog.  In fact, that's really all it
-supports.  Since, by default, Docker is not known for its superlative
-out-of-the-box syslog integration, this container runs a tiny script which
-reads all syslog data and dumps it to the container's `stderr` (which is
-then examinable by `docker logs`).
-
-If, by some chance, you want to process your Postfix logs more extensively,
-you can set `SOCKETEE_RELAY_SOCKET` and all syslog messages will also be
-sent to that socket for further processing.
-
-
 # Theory of Operation
 
 Every e-mail that is received is delivered to a custom `discourse` service.
