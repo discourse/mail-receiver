@@ -26,4 +26,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rubocop-discourse"
   spec.add_development_dependency "syntax_tree"
   spec.add_development_dependency "syntax_tree-disable_ternary"
+  spec.add_development_dependency "webrick"
 end

@@ -30,6 +30,14 @@ jobs:
       - name: Tests
         run: bundle exec rake test
 
+      - name: Build image
+        run: docker build -t mail-receiver:smoke .
+
+      - name: Smoke test
+        run: bundle exec rake smoke
+        env:
+          SMOKE_IMAGE: mail-receiver:smoke
+
   publish:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
