@@ -3,3 +3,7 @@ inherit_gem:
 
 Discourse:
   Enabled: false
+
+RSpec/DescribeClass:
+  Exclude:
+    - spec/smoke/**/*

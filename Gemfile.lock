@@ -105,6 +105,7 @@ GEM
     tzinfo (2.0.6)
       concurrent-ruby (~> 1.0)
     unicode-display_width (2.5.0)
+    webrick (1.9.2)
 
 PLATFORMS
   ruby
@@ -116,6 +117,7 @@ DEPENDENCIES
   rubocop-discourse
   syntax_tree
   syntax_tree-disable_ternary
+  webrick
 
 BUNDLED WITH
    2.5.16

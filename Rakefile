@@ -12,6 +12,7 @@ rescue Bundler::BundlerError => error
 end
 
 require 'rspec/core/rake_task'
-RSpec::Core::RakeTask.new :test
+RSpec::Core::RakeTask.new(:test) { |t| t.exclude_pattern = "spec/smoke/**/*_spec.rb" }
+RSpec::Core::RakeTask.new(:smoke) { |t| t.pattern = "spec/smoke/**/*_spec.rb" }
 
 task default: :test

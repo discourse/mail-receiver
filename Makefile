@@ -18,6 +18,6 @@ lint: bundle
 
 
 test: bundle
-	bundle exec rspec
+	bundle exec rake test
 
 .PHONY: test

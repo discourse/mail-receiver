@@ -26,12 +26,12 @@ RUN >/etc/postfix/main.cf \
 	&& postconf -e mynetworks='127.0.0.0/8 [::1]/128 [fe80::]/64' \
 	&& postconf -e transport_maps=hash:/etc/postfix/transport \
 	&& if [ "$INCLUDE_DMARC" = "true" ]; then \
-          postconf -e 'smtpd_recipient_restrictions=check_policy_service unix:private/policy,check_policy_service unix:private/policyd-spf' \
+          postconf -e 'smtpd_recipient_restrictions=check_policy_service unix:private/policyd-spf' \
           && postconf -e smtpd_milters=unix:/run/opendkim/opendkim.sock,unix:/run/opendmarc/opendmarc.sock  \
           && postconf -e non_smtpd_milters=$smtpd_milters \
           && postconf -e 'milter_default_action=accept'; \
        else \
-          postconf -e 'smtpd_recipient_restrictions = check_policy_service unix:private/policy'; \
+          postconf -e 'smtpd_recipient_restrictions='; \
        fi \
 	&& postconf -M -e 'smtp/inet=smtp inet n - n - - smtpd' \
 	&& postconf -M -e 'discourse/unix=discourse unix - n n - - pipe user=nobody:nogroup argv=/usr/local/bin/receive-mail ${recipient}' \
