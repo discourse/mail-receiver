@@ -59,6 +59,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: docker/setup-qemu-action@v4
+
       - uses: docker/setup-buildx-action@v3
 
       - name: Login to Docker Hub
@@ -71,13 +73,13 @@ jobs:
 
       - name: Build image
         if: env.PUSH != 'true'
-        run: docker buildx build --platform linux/amd64 --tag "${DOCKER_IMAGE}:test" .
+        run: docker buildx build --platform linux/amd64,linux/arm64 --tag "${DOCKER_IMAGE}:test" .
 
       - name: Build and push image
         if: env.PUSH == 'true'
         run: |
           timestamp=$(date -u +%Y%m%d%H%M%S)
-          docker buildx build --platform linux/amd64 --push \
+          docker buildx build --platform linux/amd64,linux/arm64 --push \
             --tag "${DOCKER_IMAGE}:${timestamp}" \
             --tag "${DOCKER_IMAGE}:release" \
             .
