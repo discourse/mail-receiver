@@ -2,13 +2,13 @@
 
 set -e
 
-# Send syslog messages to stderr, optionally relaying them to another socket
-# for postfix-exporter to take a look at
-if [ -z "$SOCKETEE_RELAY_SOCKET" ]; then
-	/usr/bin/socat UNIX-RECV:/dev/log,mode=0666 stderr &
-else
-	/usr/local/bin/socketee /dev/log "$SOCKETEE_RELAY_SOCKET" &
+if [ "$SOCKETEE_RELAY_SOCKET" ]; then
+	echo "FATAL ERROR: You have defined SOCKETEE_RELAY_SOCKET which is no longer supported" >&2
+	exit 1
 fi
+
+# Send syslog messages to stderr
+/usr/bin/socat UNIX-RECV:/dev/log,mode=0666 stderr &
 
 echo "Operating environment:" >&2
 env >&2
