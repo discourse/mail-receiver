@@ -10,9 +10,9 @@ RSpec.describe "mail-receiver image" do
   let(:requests) { Queue.new }
 
   def docker(*args)
-    output, status = Open3.capture2e("docker", *args)
-    raise "docker #{args.join(" ")} failed:\n#{output}" unless status.success?
-    output.strip
+    stdout, stderr, status = Open3.capture3("docker", *args)
+    raise "docker #{args.join(" ")} failed:\n#{stderr}" unless status.success?
+    stdout.strip
   end
 
   def start_fake_discourse
